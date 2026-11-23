@@ -5,172 +5,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BANKAI STREAM</title>
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#080d19;color:white;font-family:Arial,sans-serif}
-header{height:70px;background:#101827;display:flex;
-align-items:center;padding:0 5%;gap:35px;position:sticky;
-top:0;z-index:10}
-.logo{font-size:25px;font-weight:bold;color:#00b9ff}
-nav{display:flex;gap:22px;flex:1}
-nav a{color:white;text-decoration:none;font-size:14px}
-nav a:hover{color:#00b9ff}
-.search{background:#202b3c;border:1px solid #445065;
-padding:10px;border-radius:7px;color:white;width:180px}
-.hero{height:420px;display:flex;align-items:center;
-padding:6%;background:linear-gradient(90deg,#080d19 15%,transparent),
-url('https://image.tmdb.org/t/p/original/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg') center/cover}
-.hero-content{max-width:500px}
-.hero h1{font-size:48px;margin-bottom:15px}
-.hero p{line-height:1.6;color:#ddd;margin-bottom:20px}
-.btn{background:#00aaff;color:white;border:0;padding:13px 25px;
-border-radius:5px;cursor:pointer;font-weight:bold}
-.section{padding:25px 5%}
-.section h2{margin-bottom:20px}
-.movies{display:grid;grid-template-columns:repeat(6,1fr);gap:17px}
-.movie{cursor:pointer;transition:.3s}
-.movie:hover{transform:scale(1.06)}
-.movie img{width:100%;height:230px;object-fit:cover;
-border-radius:9px;background:#1b2638}
-.movie h3{font-size:14px;margin-top:9px}
-.movie p{font-size:12px;color:#9ca9ba;margin-top:5px}
-.player{display:none;position:fixed;inset:0;background:#000e;
-z-index:30;align-items:center;justify-content:center;padding:20px}
-.player-box{width:min(850px,100%);background:#111827;padding:15px;
-border-radius:10px}
-.player iframe{width:100%;aspect-ratio:16/9;border:0}
-.close{float:right;color:white;background:#e33;border:0;
-padding:8px 15px;cursor:pointer;margin-bottom:10px}
-footer{text-align:center;padding:35px;color:#8591a5}
-@media(max-width:850px){
-.movies{grid-template-columns:repeat(3,1fr)}
-header{gap:12px;padding:0 3%}
-nav{gap:10px}
-.search{width:120px}
-.hero h1{font-size:34px}
-}
-@media(max-width:500px){
-.movies{grid-template-columns:repeat(2,1fr)}
-nav a:nth-child(n+3){display:none}
-.hero{height:330px}
-.hero h1{font-size:29px}
-.movie img{height:200px}
-}
+*{box-sizing:border-box}
+body{margin:0;background:#090b14;color:white;font-family:Arial,sans-serif}
+header{padding:22px 6%;display:flex;justify-content:space-between;align-items:center;background:#111421}
+.logo{font-size:25px;font-weight:bold;color:#ff3155}
+nav a{color:white;text-decoration:none;margin-left:20px}
+.hero{padding:90px 7%;background:linear-gradient(90deg,#090b14,#17152c,#090b14)}
+.hero h1{font-size:48px;margin:0 0 15px}
+.hero p{color:#c4c5d1;max-width:500px;line-height:1.6}
+button{background:#ff3155;color:white;border:0;padding:12px 22px;border-radius:6px;cursor:pointer}
+main{padding:30px 6%}
+input{width:100%;padding:14px;border-radius:7px;border:0;margin-bottom:25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:20px}
+.card{background:#171b2a;border-radius:10px;overflow:hidden}
+.card img{width:100%;height:230px;object-fit:cover}
+.card h3{padding:0 12px}
+.card p{padding:0 12px;color:#aaa}
+footer{text-align:center;padding:30px;color:#888}
 </style>
 </head>
-
 <body>
-
 <header>
-<div class="logo">BANKAI</div>
+<div class="logo">BANKAI STREAM</div>
 <nav>
 <a href="#">Home</a>
-<a href="#movies">Movies</a>
 <a href="#anime">Anime</a>
-<a href="#series">Series</a>
+<a href="#movies">Movies</a>
 </nav>
-<input class="search" id="search" placeholder="Search..." />
 </header>
 
 <section class="hero">
-<div class="hero-content">
-<h1>ENTERTAINMENT UNLIMITED</h1>
-<p>Discover amazing movies, anime and entertainment.
-Explore your next favourite story with BANKAI STREAM.</p>
-<button class="btn" onclick="openPlayer('aqz-KE-bpKQ')">
-▶ Watch Trailer
-</button>
-</div>
+<h1>ENTER THE WORLD OF ENTERTAINMENT</h1>
+<p>Discover amazing anime, movies and entertainment. Your next adventure starts here.</p>
+<button onclick="document.getElementById('anime').scrollIntoView()">Explore Now</button>
 </section>
 
-<section class="section" id="movies">
-<h2>🔥 Trending Movies</h2>
-<div class="movies" id="movieList"></div>
-</section>
+<main>
+<input id="search" placeholder="Search anime and movies..." oninput="filterCards()">
 
-<section class="section" id="anime">
-<h2>⚔️ Popular Anime</h2>
-<div class="movies" id="animeList"></div>
-</section>
-
-<section class="section" id="series">
-<h2>⭐ Popular Series</h2>
-<div class="movies" id="seriesList"></div>
-</section>
-
-<div class="player" id="player">
-<div class="player-box">
-<button class="close" onclick="closePlayer()">✕ Close</button>
-<iframe id="video" allowfullscreen
-allow="autoplay; encrypted-media"></iframe>
-</div>
+<h2 id="anime">Popular Anime</h2>
+<div class="cards" id="animeCards">
+<div class="card"><img src="https://cdn.myanimelist.net/images/anime/1286/99889.jpg"><h3>Naruto</h3><p>Action • Adventure</p></div>
+<div class="card"><img src="https://cdn.myanimelist.net/images/anime/10/47347.jpg"><h3>Attack on Titan</h3><p>Action • Fantasy</p></div>
+<div class="card"><img src="https://cdn.myanimelist.net/images/anime/1208/94745.jpg"><h3>One Piece</h3><p>Adventure • Fantasy</p></div>
+<div class="card"><img src="https://cdn.myanimelist.net/images/anime/1223/96541.jpg"><h3>Death Note</h3><p>Thriller • Mystery</p></div>
 </div>
 
-<footer>
-<h2 class="logo">BANKAI STREAM</h2>
-<p>Movies • Anime • Series • Entertainment</p>
-<p>© 2026 BANKAI STREAM</p>
-</footer>
+<h2 id="movies" style="margin-top:40px">Movies & Entertainment</h2>
+<div class="cards">
+<div class="card"><img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500"><h3>Movie Collection</h3><p>Entertainment</p></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500"><h3>Cinema World</h3><p>Movies</p></div>
+</div>
+</main>
+
+<footer>© 2026 BANKAI STREAM | Entertainment Starts Here</footer>
 
 <script>
-const movies = [
-["Inception","https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg","YoHD9XEInc0"],
-["Interstellar","https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg","zSWdZVtXT7E"],
-["The Batman","https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg","mqqft2x_Aa4"],
-["Avatar","https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg","5PSNL1qE6VY"],
-["Joker","https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg","zAGVQLHvwOY"],
-["Dune","https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg","n9xhJrPXop4"]
-];
-
-const anime = [
-["Demon Slayer","https://image.tmdb.org/t/p/w500/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg","VQGCKyvzIM4"],
-["Your Name","https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg","xU47nhruN-Q"],
-["Jujutsu Kaisen","https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrXgtCeQxoccHE.jpg","pkKu9hLT-t8"],
-["One Piece","https://image.tmdb.org/t/p/w500/e3NBGiAifW9Xt8xDsgRuDBi9KqD.jpg","MCb13lbVGE0"],
-["Suzume","https://image.tmdb.org/t/p/w500/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg","IfKNOUUtyCA"],
-["Spirited Away","https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg","ByXuk9QqQkk"]
-];
-
-const series = [
-["Wednesday","https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg","Di310WS8zLk"],
-["Stranger Things","https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg","b9EkMc79ZSU"],
-["Loki","https://image.tmdb.org/t/p/w500/voHUmluYmKyleFkTu3lOXQG702u.jpg","nW948Va-l10"],
-["The Witcher","https://image.tmdb.org/t/p/w500/7vjaCdMw15FEbXyLQTVa04URsPm.jpg","ndl1W4ltcmg"],
-["Wednesday","https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg","Di310WS8zLk"],
-["Dark","https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5WXrpFbk1Z.jpg","ESEUoa-mz2c"]
-];
-
-function render(data,id){
-document.getElementById(id).innerHTML=data.map((m,i)=>`
-<div class="movie" onclick="openPlayer('${m[2]}')">
-<img src="${m[1]}" alt="${m[0]}"
-loading="lazy" onerror="this.src='https://placehold.co/300x450/172338/ffffff?text=No+Image'">
-<h3>${m[0]}</h3>
-<p>▶ Watch Trailer</p>
-</div>`).join("");
+function filterCards(){
+ const query=document.getElementById('search').value.toLowerCase();
+ document.querySelectorAll('#animeCards .card').forEach(card=>{
+  card.style.display=card.innerText.toLowerCase().includes(query)?'':'none';
+ });
 }
-
-render(movies,"movieList");
-render(anime,"animeList");
-render(series,"seriesList");
-
-function openPlayer(video){
-document.getElementById("player").style.display="flex";
-document.getElementById("video").src=
-"https://www.youtube.com/embed/"+video+"?autoplay=1";
-}
-function closePlayer(){
-document.getElementById("player").style.display="none";
-document.getElementById("video").src="";
-}
-
-document.getElementById("search").addEventListener("input",function(){
-let q=this.value.toLowerCase();
-document.querySelectorAll(".movie").forEach(card=>{
-card.style.display=card.innerText.toLowerCase().includes(q)?"block":"none";
-});
-});
 </script>
 </body>
 </html>
