@@ -28,7 +28,7 @@ jobs:
         id: build-image
         uses: deploy-actions/push-to-ecr@v1
         with:
-          repository-name: dev-an
+          repository-name: dev-ana
           image-tag: ${{ github.sha }}
 
       - name: Fill in the new image ID in the Amazon ECS task definition
