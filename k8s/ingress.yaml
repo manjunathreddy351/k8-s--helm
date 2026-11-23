@@ -15,7 +15,7 @@ spec:
   ingressClassName: alb
 
   rules:
-    - host: myshop.anildevops.space
+    - host: myshop.anildevops.sp
       http:
         paths:
           - path: /
