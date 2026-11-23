@@ -1,49 +1,48 @@
-name: CI-CD
+name: ECS pipeline
 
 on:
   push:
-    branches: [main]
-
-env:
-  AWS_REGION: ap-south-1
-  ECR_REPOSITORY: anil-docker
-  EKS_CLUSTER: samcluster
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  buildanddeploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: checking out the latest code
+        uses: actions/checkout@v7
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-south-1
 
       - name: Login to Amazon ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push image
-        env:
-          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-        run: |
-          docker build -t $IMAGE .
-          docker push $IMAGE
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+      - name: Build & Push Docker Image 🐳
+        id: build-image
+        uses: deploy-actions/push-to-ecr@v1
+        with:
+          repository-name: anil-docker
+          image-tag: ${{ github.sha }}
 
-      - name: Connect to EKS
-        run: |
-          aws eks update-kubeconfig \
-            --name $EKS_CLUSTER \
-            --region $AWS_REGION
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ani-taskdefinition.json
+          container-name: aniflix-cont
+          image: ${{ steps.build-image.outputs.image_uri }}
 
-      - name: Deploy to Kubernetes
-        run: |
-          sed -i "s|image: .*|image: $IMAGE|" k8s/deployment.yaml
-          kubectl apply -f k8s/
-          kubectl rollout status deployment/myshop
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ani-taskdefinition-service
+          cluster: mycluster
+          wait-for-service-stability: true
